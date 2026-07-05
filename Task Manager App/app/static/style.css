@@ -1,0 +1,202 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+/* Navbar */
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  font-size: 18px;
+  font-weight: 700;
+  color: #5b4fd8;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #444;
+}
+
+.nav-user {
+  font-size: 14px;
+  color: #888;
+}
+
+/* Container */
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  background: #fff;
+  color: #333;
+}
+
+.btn-primary {
+  background: #5b4fd8;
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-primary:hover { background: #4a3fc7; }
+
+.btn-outline {
+  border-color: #5b4fd8;
+  color: #5b4fd8;
+  background: transparent;
+}
+
+.btn-danger {
+  background: #fff0f0;
+  color: #c0392b;
+  border-color: #f5c6c6;
+}
+
+/* Flash messages */
+.flash-box {
+  max-width: 700px;
+  margin: 16px auto 0;
+  padding: 0 16px;
+}
+
+.flash {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.flash-success { background: #EAF3DE; color: #3B6D11; }
+.flash-error   { background: #FCEBEB; color: #A32D2D; }
+.flash-info    { background: #E6F1FB; color: #185FA5; }
+
+/* Auth forms */
+.auth-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 420px;
+  margin: 60px auto;
+}
+
+.auth-card h2 {
+  font-size: 22px;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+
+.auth-card p {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #fafafa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #5b4fd8;
+  background: #fff;
+}
+
+.form-footer {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-top: 16px;
+}
+
+.form-footer a {
+  color: #5b4fd8;
+  text-decoration: none;
+}
+
+
+/* Active nav link */
+.nav-active {
+  color: #5b4fd8 !important;
+  font-weight: 500;
+}
+
+/* Textarea */
+textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #fafafa;
+  resize: vertical;
+  font-family: sans-serif;
+}
+
+textarea:focus {
+  border-color: #5b4fd8;
+  background: #fff;
+}
+
+/* Details/summary for category manager */
+details summary {
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}

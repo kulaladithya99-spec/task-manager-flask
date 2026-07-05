@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<div style="max-width:520px;margin:0 auto">
+
+  <!-- Profile header -->
+  <div style="background:#fff;border:1px solid #e5e5e5;
+              border-radius:12px;padding:28px;
+              text-align:center;margin-bottom:16px">
+
+    <!-- Avatar circle -->
+    <div style="width:72px;height:72px;border-radius:50%;
+                background:#EEEDFE;display:flex;align-items:center;
+                justify-content:center;margin:0 auto 14px;
+                font-size:28px;font-weight:600;color:#5b4fd8">
+      {{ current_user.username[0].upper() }}
+    </div>
+
+    <h2 style="font-size:20px;margin-bottom:4px">
+      {{ current_user.username }}
+    </h2>
+    <p style="color:#888;font-size:14px">{{ current_user.email }}</p>
+    <p style="color:#aaa;font-size:12px;margin-top:6px">
+      Member since {{ current_user.created_at.strftime('%B %Y') }}
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;
+              gap:10px;margin-bottom:16px">
+
+    <div style="background:#fff;border:1px solid #e5e5e5;
+                border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:24px;font-weight:600;color:#5b4fd8">
+        {{ total }}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Total</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e5e5;
+                border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:24px;font-weight:600;color:#3B6D11">
+        {{ done }}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Completed</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e5e5;
+                border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:24px;font-weight:600;color:#854F0B">
+        {{ pending }}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Pending</div>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:10px">
+    <a href="{{ url_for('auth.settings') }}"
+       class="btn btn-primary" style="flex:1;text-align:center">
+      Account settings
+    </a>
+    <a href="{{ url_for('tasks.index') }}"
+       class="btn" style="flex:1;text-align:center">
+      My tasks
+    </a>
+  </div>
+
+</div>
+
+{% endblock %}

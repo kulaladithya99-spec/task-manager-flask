@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;margin:0 auto">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <a href="{{ url_for('auth.profile') }}"
+       style="color:#888;text-decoration:none;font-size:14px">
+      ← Back to profile
+    </a>
+    <h2>Account settings</h2>
+  </div>
+
+  <!-- Change username -->
+  <div style="background:#fff;border:1px solid #e5e5e5;
+              border-radius:12px;padding:24px;margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:16px">Change username</h3>
+    <form method="POST">
+      <input type="hidden" name="action" value="username" />
+      <div class="form-group">
+        <label>New username</label>
+        <input type="text" name="username"
+               value="{{ current_user.username }}" required />
+      </div>
+      <button type="submit" class="btn btn-primary">
+        Update username
+      </button>
+    </form>
+  </div>
+
+  <!-- Change password -->
+  <div style="background:#fff;border:1px solid #e5e5e5;
+              border-radius:12px;padding:24px;margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:16px">Change password</h3>
+    <form method="POST">
+      <input type="hidden" name="action" value="password" />
+      <div class="form-group">
+        <label>Current password</label>
+        <input type="password" name="current_password"
+               placeholder="Enter current password" required />
+      </div>
+      <div class="form-group">
+        <label>New password</label>
+        <input type="password" name="new_password"
+               placeholder="Min 6 characters" required />
+      </div>
+      <div class="form-group">
+        <label>Confirm new password</label>
+        <input type="password" name="confirm_password"
+               placeholder="Repeat new password" required />
+      </div>
+      <button type="submit" class="btn btn-primary">
+        Update password
+      </button>
+    </form>
+  </div>
+
+  <!-- Danger zone -->
+  <div style="background:#fff;border:1px solid #f5c6c6;
+              border-radius:12px;padding:24px">
+    <h3 style="font-size:15px;color:#A32D2D;margin-bottom:8px">
+      Danger zone
+    </h3>
+    <p style="font-size:13px;color:#888;margin-bottom:14px">
+      Once you log out all sessions will be cleared.
+    </p>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">
+      Logout all sessions
+    </a>
+  </div>
+
+</div>
+{% endblock %}

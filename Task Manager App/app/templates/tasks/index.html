@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+
+<!-- Header row -->
+<div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:20px">
+  <h2>My Tasks</h2>
+  <a href="{{ url_for('tasks.add') }}" class="btn btn-primary">
+    + Add Task
+  </a>
+</div>
+
+<!-- Search & filter bar -->
+
+<form method="GET" style="background:#fff;border:1px solid #e5e5e5;
+      border-radius:12px;padding:16px;margin-bottom:20px;
+      display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+
+  <div style="flex:1;min-width:140px">
+    <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Search</label>
+    <input type="text" name="search" value="{{ search }}"
+           placeholder="Search tasks..."
+           style="width:100%;padding:8px 10px;border:1px solid #ddd;
+                  border-radius:8px;font-size:13px"/>
+  </div>
+
+  <div>
+    <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Status</label>
+    <select name="status" style="padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px">
+      <option value="all"     {% if status=='all'     %}selected{% endif %}>All</option>
+      <option value="pending" {% if status=='pending' %}selected{% endif %}>Pending</option>
+      <option value="done"    {% if status=='done'    %}selected{% endif %}>Done</option>
+    </select>
+  </div>
+
+  <div>
+    <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Priority</label>
+    <select name="priority" style="padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px">
+      <option value="all"    {% if priority=='all'    %}selected{% endif %}>All</option>
+      <option value="high"   {% if priority=='high'   %}selected{% endif %}>High</option>
+      <option value="medium" {% if priority=='medium' %}selected{% endif %}>Medium</option>
+      <option value="low"    {% if priority=='low'    %}selected{% endif %}>Low</option>
+    </select>
+  </div>
+
+  <div>
+    <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Category</label>
+    <select name="category_id" style="padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px">
+      <option value="all">All</option>
+      {% for cat in categories %}
+      <option value="{{ cat.id }}"
+        {% if category_id == cat.id|string %}selected{% endif %}>
+        {{ cat.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Filter</button>
+  <a href="{{ url_for('tasks.index') }}" class="btn">Clear</a>
+</form>
+
+<!-- Category manager -->
+<details style="background:#fff;border:1px solid #e5e5e5;
+                border-radius:12px;padding:14px;margin-bottom:20px">
+  <summary style="font-size:13px;font-weight:500;cursor:pointer;color:#534AB7">
+    Manage categories
+  </summary>
+  <div style="margin-top:14px">
+
+    <!-- Add category form -->
+    <form method="POST" action="{{ url_for('tasks.add_category') }}"
+          style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" name="name" placeholder="New category name..."
+             style="flex:1;padding:7px 10px;border:1px solid #ddd;
+                    border-radius:8px;font-size:13px"/>
+      <button type="submit" class="btn btn-primary"
+              style="padding:7px 14px;font-size:13px">
+        Add
+      </button>
+    </form>
+
+    <!-- Existing categories -->
+    {% if categories %}
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      {% for cat in categories %}
+      <div style="display:flex;align-items:center;gap:6px;
+                  background:#EEEDFE;border-radius:20px;
+                  padding:4px 10px">
+        <span style="font-size:12px;color:#534AB7">{{ cat.name }}</span>
+        <a href="{{ url_for('tasks.delete_category', cat_id=cat.id) }}"
+           style="font-size:11px;color:#A32D2D;text-decoration:none"
+           onclick="return confirm('Delete category?')">✕</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="font-size:13px;color:#aaa">No categories yet.</p>
+    {% endif %}
+
+  </div>
+</details>
+
+<!-- Task count -->
+<p style="font-size:13px;color:#888;margin-bottom:12px">
+  {{ tasks|length }} task{{ 's' if tasks|length != 1 }}
+</p>
+
+<!-- Task list -->
+{% if tasks %}
+  {% for task in tasks %}
+  <div style="background:#fff;border:1px solid #e5e5e5;
+              border-radius:12px;padding:16px;margin-bottom:10px;
+              {% if task.done %}opacity:0.55{% endif %}
+              {% if task.is_overdue %}border-left:4px solid #e74c3c{% endif %}">
+
+    <!-- Top row -->
+    <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+
+      <!-- Complete button -->
+      <a href="{{ url_for('tasks.complete', task_id=task.id) }}"
+         class="btn"
+         style="padding:4px 10px;font-size:12px;flex-shrink:0;
+                {% if task.done %}background:#EAF3DE;color:#3B6D11{% endif %}">
+        {% if task.done %}✓ Done{% else %}○ Mark done{% endif %}
+      </a>
+
+      <!-- Title & meta -->
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:500;
+                    {% if task.done %}
+                    text-decoration:line-through;color:#999
+                    {% endif %}">
+          {{ task.title }}
+        </div>
+
+        {% if task.description %}
+        <div style="font-size:13px;color:#888;margin-top:3px">
+          {{ task.description }}
+        </div>
+        {% endif %}
+
+        <!-- Tags row -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+
+          <!-- Priority badge -->
+          <span style="font-size:11px;padding:2px 8px;border-radius:20px;
+            {% if task.priority == 'high' %}
+              background:#FCEBEB;color:#A32D2D
+            {% elif task.priority == 'medium' %}
+              background:#FAEEDA;color:#854F0B
+            {% else %}
+              background:#EAF3DE;color:#3B6D11
+            {% endif %}">
+            {{ task.priority }} priority
+          </span>
+
+          <!-- Category badge -->
+          {% if task.category %}
+          <span style="font-size:11px;padding:2px 8px;border-radius:20px;
+                       background:#EEEDFE;color:#534AB7">
+            {{ task.category.name }}
+          </span>
+          {% endif %}
+
+          <!-- Due date -->
+          {% if task.due_date %}
+          <span style="font-size:11px;padding:2px 8px;border-radius:20px;
+            {% if task.is_overdue %}
+              background:#FCEBEB;color:#A32D2D
+            {% else %}
+              background:#f0f0f0;color:#666
+            {% endif %}">
+            {% if task.is_overdue %}Overdue — {% endif %}
+            Due {{ task.due_date.strftime('%d %b %Y') }}
+          </span>
+          {% endif %}
+
+        </div>
+      </div>
+
+      <!-- Edit & Delete -->
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <a href="{{ url_for('tasks.edit', task_id=task.id) }}"
+           class="btn" style="padding:4px 10px;font-size:12px">
+          Edit
+        </a>
+        <a href="{{ url_for('tasks.delete', task_id=task.id) }}"
+           class="btn btn-danger"
+           style="padding:4px 10px;font-size:12px"
+           onclick="return confirm('Delete this task?')">
+          Delete
+        </a>
+      </div>
+
+    </div>
+  </div>
+  {% endfor %}
+
+{% else %}
+  <div style="text-align:center;padding:60px 0;color:#aaa">
+    <div style="font-size:32px;margin-bottom:12px">📋</div>
+    <div style="font-size:15px;margin-bottom:8px">No tasks found</div>
+    <a href="{{ url_for('tasks.add') }}" class="btn btn-primary">
+      Add your first task
+    </a>
+  </div>
+{% endif %}
+
+{% endblock %}

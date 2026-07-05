@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Add Task{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;margin:0 auto">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <a href="{{ url_for('tasks.index') }}"
+       style="color:#888;text-decoration:none;font-size:14px">
+      ← Back
+    </a>
+    <h2>Add new task</h2>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e5e5;
+              border-radius:12px;padding:28px">
+    <form method="POST">
+
+      <div class="form-group">
+        <label>Task title *</label>
+        <input type="text" name="title"
+               value="{{ request.form.get('title','') }}"
+               placeholder="What do you need to do?"
+               required />
+      </div>
+
+      <div class="form-group">
+        <label>Description (optional)</label>
+        <textarea name="description" rows="3"
+                  placeholder="Add more details...">
+{{ request.form.get('description','') }}</textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>Priority</label>
+          <select name="priority">
+            <option value="low"    {% if request.form.get('priority')=='low'    %}selected{% endif %}>Low</option>
+            <option value="medium" {% if request.form.get('priority')!='low' and request.form.get('priority')!='high' %}selected{% endif %}>Medium</option>
+            <option value="high"   {% if request.form.get('priority')=='high'   %}selected{% endif %}>High</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Due date (optional)</label>
+          <input type="date" name="due_date"
+                 value="{{ request.form.get('due_date','') }}" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Category (optional)</label>
+        <select name="category_id">
+          <option value="">No category</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}">{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%">
+        Add task
+      </button>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

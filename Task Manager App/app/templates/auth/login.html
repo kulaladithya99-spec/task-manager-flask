@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <h2>Welcome back</h2>
+  <p>Login to see your tasks</p>
+
+  <form method="POST">
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email"
+             value="{{ request.form.get('email', '') }}"
+             placeholder="you@email.com" required />
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password"
+             placeholder="Your password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%">
+      Login
+    </button>
+
+  </form>
+
+  <div class="form-footer">
+    No account yet?
+    <a href="{{ url_for('auth.register') }}">Register here</a>
+  </div>
+</div>
+{% endblock %}
