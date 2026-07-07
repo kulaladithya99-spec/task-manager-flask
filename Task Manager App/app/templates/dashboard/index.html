@@ -3,101 +3,71 @@
 
 {% block content %}
 
-<!-- Welcome header -->
-<div style="margin-bottom:28px">
-  <h2 style="font-size:22px;margin-bottom:4px">
-    Welcome back, {{ current_user.username }}!
+<div style="margin-bottom:20px">
+  <h2 style="font-size:20px;margin-bottom:4px">
+    Welcome, {{ current_user.username }}!
   </h2>
-  <p style="color:#888;font-size:14px">
-    Here's what's going on with your tasks today.
-  </p>
+  <p style="color:#888;font-size:14px">Your task overview</p>
 </div>
 
-<!-- Stats cards -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-            gap:12px;margin-bottom:28px">
-
-  <div style="background:#fff;border:1px solid #e5e5e5;
-              border-radius:12px;padding:18px;text-align:center">
-    <div style="font-size:28px;font-weight:600;color:#5b4fd8">{{ total }}</div>
-    <div style="font-size:13px;color:#888;margin-top:4px">Total tasks</div>
+<!-- Stats grid — 2x2 on mobile -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-number" style="color:#5b4fd8">{{ total }}</div>
+    <div class="stat-label">Total</div>
   </div>
-
-  <div style="background:#fff;border:1px solid #e5e5e5;
-              border-radius:12px;padding:18px;text-align:center">
-    <div style="font-size:28px;font-weight:600;color:#3B6D11">{{ done }}</div>
-    <div style="font-size:13px;color:#888;margin-top:4px">Completed</div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:#3B6D11">{{ done }}</div>
+    <div class="stat-label">Completed</div>
   </div>
-
-  <div style="background:#fff;border:1px solid #e5e5e5;
-              border-radius:12px;padding:18px;text-align:center">
-    <div style="font-size:28px;font-weight:600;color:#854F0B">{{ pending }}</div>
-    <div style="font-size:13px;color:#888;margin-top:4px">Pending</div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:#854F0B">{{ pending }}</div>
+    <div class="stat-label">Pending</div>
   </div>
-
-  <div style="background:#fff;border:1px solid #e5e5e5;
-              border-radius:12px;padding:18px;text-align:center">
-    <div style="font-size:28px;font-weight:600;color:#A32D2D">{{ overdue }}</div>
-    <div style="font-size:13px;color:#888;margin-top:4px">Overdue</div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:#A32D2D">{{ overdue }}</div>
+    <div class="stat-label">Overdue</div>
   </div>
-
 </div>
 
 <!-- Progress bar -->
-<div style="background:#fff;border:1px solid #e5e5e5;
-            border-radius:12px;padding:20px;margin-bottom:24px">
-  <div style="display:flex;justify-content:space-between;
-              align-items:center;margin-bottom:10px">
+<div class="progress-wrap">
+  <div class="progress-header">
     <span style="font-size:14px;font-weight:500">Overall progress</span>
-    <span style="font-size:14px;font-weight:600;color:#5b4fd8">
-      {{ percent }}%
-    </span>
+    <span style="font-size:14px;font-weight:600;color:#5b4fd8">{{ percent }}%</span>
   </div>
-  <div style="background:#f0f0f0;border-radius:20px;height:10px;overflow:hidden">
-    <div style="height:100%;border-radius:20px;background:#5b4fd8;
-                width:{{ percent }}%;transition:width 0.3s">
-    </div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:{{ percent }}%"></div>
   </div>
-  <div style="font-size:12px;color:#aaa;margin-top:8px">
-    {{ done }} of {{ total }} tasks completed
-  </div>
+  <div class="progress-note">{{ done }} of {{ total }} tasks completed</div>
 </div>
 
-<!-- Recent tasks & categories side by side -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<!-- Panels — stacked on mobile, side by side on desktop -->
+<div class="dash-grid">
 
   <!-- Recent tasks -->
-  <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:20px">
-    <div style="display:flex;justify-content:space-between;
-                align-items:center;margin-bottom:14px">
-      <span style="font-size:14px;font-weight:500">Recent tasks</span>
+  <div class="dash-panel">
+    <div class="dash-panel-header">
+      <span class="dash-panel-title">Recent tasks</span>
       <a href="{{ url_for('tasks.index') }}"
          style="font-size:12px;color:#5b4fd8;text-decoration:none">
         View all
       </a>
     </div>
-
     {% if recent %}
       {% for task in recent %}
-      <div style="display:flex;align-items:center;gap:10px;
-                  padding:8px 0;border-bottom:1px solid #f5f5f5">
+      <div class="recent-row">
         <span style="font-size:16px">
           {% if task.done %}✅{% elif task.is_overdue %}🔴{% else %}⬜{% endif %}
         </span>
-        <span style="font-size:13px;flex:1;
-          {% if task.done %}color:#aaa;text-decoration:line-through{% endif %}">
-          {{ task.title }}
-        </span>
-        <span style="font-size:11px;padding:2px 7px;border-radius:20px;
-          {% if task.priority == 'high' %}background:#FCEBEB;color:#A32D2D
-          {% elif task.priority == 'medium' %}background:#FAEEDA;color:#854F0B
-          {% else %}background:#EAF3DE;color:#3B6D11{% endif %}">
-          {{ task.priority }}
-        </span>
+        <span class="recent-title
+          {% if task.done %}" style="color:#aaa;text-decoration:line-through
+          {% endif %}">{{ task.title }}</span>
+        <span class="badge badge-{{ task.priority }}">{{ task.priority }}</span>
       </div>
       {% endfor %}
     {% else %}
-      <p style="font-size:13px;color:#aaa;text-align:center;padding:20px 0">
+      <p style="font-size:13px;color:#aaa;text-align:center;padding:16px 0">
         No tasks yet.
         <a href="{{ url_for('tasks.add') }}" style="color:#5b4fd8">Add one!</a>
       </p>
@@ -105,30 +75,26 @@
   </div>
 
   <!-- Categories -->
-  <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:20px">
-    <div style="font-size:14px;font-weight:500;margin-bottom:14px">
-      Categories
+  <div class="dash-panel">
+    <div class="dash-panel-header">
+      <span class="dash-panel-title">Categories</span>
     </div>
-
     {% if categories %}
       {% for cat in categories %}
-      <div style="display:flex;justify-content:space-between;
-                  align-items:center;padding:8px 0;
-                  border-bottom:1px solid #f5f5f5">
-        <span style="font-size:13px;color:#534AB7">{{ cat.name }}</span>
+      <div class="recent-row">
+        <span style="font-size:13px;color:#534AB7;flex:1">{{ cat.name }}</span>
         <span style="font-size:12px;color:#888">
           {{ cat.tasks|length }} task{{ 's' if cat.tasks|length != 1 }}
         </span>
       </div>
       {% endfor %}
     {% else %}
-      <p style="font-size:13px;color:#aaa;text-align:center;padding:20px 0">
+      <p style="font-size:13px;color:#aaa;text-align:center;padding:16px 0">
         No categories yet.
       </p>
     {% endif %}
-
     <a href="{{ url_for('tasks.index') }}"
-       style="display:block;text-align:center;margin-top:14px;
+       style="display:block;text-align:center;margin-top:12px;
               font-size:13px;color:#5b4fd8;text-decoration:none">
       Manage categories
     </a>
@@ -136,8 +102,7 @@
 
 </div>
 
-<!-- Quick add button -->
-<div style="text-align:center;margin-top:24px">
+<div style="text-align:center;margin-top:20px">
   <a href="{{ url_for('tasks.add') }}" class="btn btn-primary">
     + Add new task
   </a>
