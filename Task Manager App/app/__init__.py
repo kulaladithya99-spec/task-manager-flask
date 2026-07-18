@@ -33,8 +33,6 @@ def create_app():
     app.register_blueprint(tasks,     url_prefix='/tasks')
     app.register_blueprint(dashboard)
 
-    with app.app_context():
-        db.create_all()
 
     # 404 error handler
     @app.errorhandler(404)
