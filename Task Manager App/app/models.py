@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from datetime import datetime
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,6 +56,7 @@ class Task(db.Model):
     priority    = db.Column(db.String(10),  default='medium')
     due_date    = db.Column(db.Date,        nullable=True)
     created_at  = db.Column(db.DateTime,    default=datetime.utcnow)
+    is_archived = db.Column(db.Boolean, default=False)
 
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'),     nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)

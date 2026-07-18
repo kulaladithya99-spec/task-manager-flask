@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 from dotenv import load_dotenv
-from .models import db, User
+from .models import db, User, migrate
 import os
 
 load_dotenv()
@@ -16,6 +16,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.login_view    = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
