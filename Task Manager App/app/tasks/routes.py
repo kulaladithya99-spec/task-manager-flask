@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models import db, Task, Category
 from datetime import datetime
+from app.form import TaskForm
 
 tasks = Blueprint('tasks', __name__)
 
@@ -44,37 +45,24 @@ def index():
 
 
 # ── Add task ────────────────────────────────────────────────
+
+
 @tasks.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
     categories = Category.query.filter_by(user_id=current_user.id).all()
 
-    if request.method == 'POST':
-        title       = request.form.get('title', '').strip()
-        description = request.form.get('description', '').strip()
-        priority    = request.form.get('priority', 'medium')
-        due_date    = request.form.get('due_date', '')
-        category_id = request.form.get('category_id', '')
+    form = TaskForm()
+    # Populate category choices dynamically — (0, 'None') as a fallback option
+    form.category_id.choices = [(0, 'No Category')] + [(c.id, c.name) for c in categories]
 
-        if not title:
-            flash('Task title is required.', 'error')
-            return render_template('tasks/add.html', categories=categories)
-
-        # Parse due date if provided
-        parsed_due = None
-        if due_date:
-            try:
-                parsed_due = datetime.strptime(due_date, '%Y-%m-%d').date()
-            except ValueError:
-                flash('Invalid date format.', 'error')
-                return render_template('tasks/add.html', categories=categories)
-
+    if form.validate_on_submit():
         task = Task(
-            title       = title,
-            description = description,
-            priority    = priority,
-            due_date    = parsed_due,
-            category_id = int(category_id) if category_id else None,
+            title       = form.title.data,
+            description = form.description.data,
+            priority    = form.priority.data,
+            due_date    = form.due_date.data,
+            category_id = form.category_id.data if form.category_id.data != 0 else None,
             user_id     = current_user.id
         )
         db.session.add(task)
@@ -83,7 +71,7 @@ def add():
         flash('Task added successfully!', 'success')
         return redirect(url_for('tasks.index'))
 
-    return render_template('tasks/add.html', categories=categories)
+    return render_template('tasks/add.html', form=form)
 
 
 # ── Edit task ───────────────────────────────────────────────

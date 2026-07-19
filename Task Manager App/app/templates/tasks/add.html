@@ -15,52 +15,39 @@
   <div style="background:#fff;border:1px solid #e5e5e5;
               border-radius:12px;padding:28px">
     <form method="POST">
+      {{ form.hidden_tag() }}  {# ← this renders the CSRF token automatically #}
 
       <div class="form-group">
-        <label>Task title *</label>
-        <input type="text" name="title"
-               value="{{ request.form.get('title','') }}"
-               placeholder="What do you need to do?"
-               required />
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+        {% if form.title.errors %}
+            <span class="error">{{ form.title.errors[0] }}</span>
+        {% endif %}
       </div>
 
       <div class="form-group">
-        <label>Description (optional)</label>
-        <textarea name="description" rows="3"
-                  placeholder="Add more details...">
-{{ request.form.get('description','') }}</textarea>
+        {{ form.description.label }}
+        {{ form.description(class="form-control") }}
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="form-group">
-          <label>Priority</label>
-          <select name="priority">
-            <option value="low"    {% if request.form.get('priority')=='low'    %}selected{% endif %}>Low</option>
-            <option value="medium" {% if request.form.get('priority')!='low' and request.form.get('priority')!='high' %}selected{% endif %}>Medium</option>
-            <option value="high"   {% if request.form.get('priority')=='high'   %}selected{% endif %}>High</option>
-          </select>
+        {{ form.priority.label }}
+        {{ form.priority(class="form-control") }}
         </div>
 
         <div class="form-group">
-          <label>Due date (optional)</label>
-          <input type="date" name="due_date"
-                 value="{{ request.form.get('due_date','') }}" />
+        {{ form.due_date.label }}
+        {{ form.due_date(class="form-control") }}
         </div>
       </div>
 
       <div class="form-group">
-        <label>Category (optional)</label>
-        <select name="category_id">
-          <option value="">No category</option>
-          {% for cat in categories %}
-          <option value="{{ cat.id }}">{{ cat.name }}</option>
-          {% endfor %}
-        </select>
+        {{ form.category_id.label }}
+        {{ form.category_id(class="form-control") }}
       </div>
 
-      <button type="submit" class="btn btn-primary" style="width:100%">
-        Add task
-      </button>
+    {{ form.submit(class="btn btn-primary") }}
 
     </form>
   </div>
