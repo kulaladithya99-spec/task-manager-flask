@@ -81,38 +81,21 @@ def edit(task_id):
     task = Task.query.filter_by(id=task_id, user_id=current_user.id).first_or_404()
     categories = Category.query.filter_by(user_id=current_user.id).all()
 
-    if request.method == 'POST':
-        title       = request.form.get('title', '').strip()
-        description = request.form.get('description', '').strip()
-        priority    = request.form.get('priority', 'medium')
-        due_date    = request.form.get('due_date', '')
-        category_id = request.form.get('category_id', '')
+    form = TaskForm(obj=task)
+    form.category_id.choices = [(0, 'No Category')] + [(c.id, c.name) for c in categories]
 
-        if not title:
-            flash('Task title is required.', 'error')
-            return render_template('tasks/edit.html',
-                                   task=task, categories=categories)
-
-        parsed_due = None
-        if due_date:
-            try:
-                parsed_due = datetime.strptime(due_date, '%Y-%m-%d').date()
-            except ValueError:
-                flash('Invalid date format.', 'error')
-                return render_template('tasks/edit.html',
-                                       task=task, categories=categories)
-
-        task.title       = title
-        task.description = description
-        task.priority    = priority
-        task.due_date    = parsed_due
-        task.category_id = int(category_id) if category_id else None
+    if form.validate_on_submit():
+        task.title       = form.title.data
+        task.description = form.description.data
+        task.priority    = form.priority.data
+        task.due_date    = form.due_date.data
+        task.category_id = form.category_id.data if form.category_id.data != 0 else None
         db.session.commit()
 
         flash('Task updated!', 'success')
         return redirect(url_for('tasks.index'))
 
-    return render_template('tasks/edit.html', task=task, categories=categories)
+    return render_template('tasks/edit.html', task=task, form=form)
 
 
 # ── Toggle complete ─────────────────────────────────────────
