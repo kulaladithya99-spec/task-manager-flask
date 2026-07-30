@@ -9,12 +9,15 @@ load_dotenv()
 
 login_manager = LoginManager()
 
-def create_app():
+def create_app(test_config=None):
     app = Flask(__name__)
 
-    app.config['SECRET_KEY']                  = os.getenv('SECRET_KEY')
-    app.config['SQLALCHEMY_DATABASE_URI']     = os.getenv('DATABASE_URL')
+    app.config['SECRET_KEY']                     = os.getenv('SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI']        = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    if test_config:
+        app.config.update(test_config)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -36,8 +39,6 @@ def create_app():
     app.register_blueprint(dashboard)
     app.register_blueprint(api_auth)
 
-
-    # 404 error handler
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('404.html'), 404
