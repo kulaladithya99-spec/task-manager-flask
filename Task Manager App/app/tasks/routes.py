@@ -7,7 +7,6 @@ from app.form import TaskForm
 tasks = Blueprint('tasks', __name__)
 
 
-# ── View all tasks ──────────────────────────────────────────
 @tasks.route('/')
 @login_required
 def index():
@@ -15,6 +14,7 @@ def index():
     priority    = request.args.get('priority',    'all')
     category_id = request.args.get('category_id', 'all')
     search      = request.args.get('search',      '')
+    page        = request.args.get('page', 1, type=int)
 
     query = Task.query.filter_by(user_id=current_user.id)
 
@@ -32,11 +32,14 @@ def index():
     if search:
         query = query.filter(Task.title.ilike(f'%{search}%'))
 
-    tasks_list = query.order_by(Task.created_at.desc()).all()
+    pagination = query.order_by(Task.created_at.desc()).paginate(
+        page=page, per_page=5, error_out=False
+    )
     categories = Category.query.filter_by(user_id=current_user.id).all()
 
     return render_template('tasks/index.html',
-                           tasks=tasks_list,
+                           tasks=pagination.items,
+                           pagination=pagination,
                            categories=categories,
                            status=status,
                            priority=priority,
