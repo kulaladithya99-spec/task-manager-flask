@@ -40,6 +40,7 @@ class Category(db.Model):
     id      = db.Column(db.Integer, primary_key=True)
     name    = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False) 
 
     tasks   = db.relationship('Task', backref='category', lazy=True)
 
@@ -57,6 +58,7 @@ class Task(db.Model):
     due_date    = db.Column(db.Date,        nullable=True)
     created_at  = db.Column(db.DateTime,    default=datetime.utcnow)
     is_archived = db.Column(db.Boolean, default=False)
+    is_deleted = db.Column(db.Boolean, default=False)
 
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'),     nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)

@@ -3,9 +3,14 @@
 
 {% block content %}
 
+
+
 <div class="page-header">
   <h2>My Tasks</h2>
-  <a href="{{ url_for('tasks.add') }}" class="btn btn-primary">+ Add Task</a>
+  <div style="display:flex;gap:8px">
+    <a href="{{ url_for('tasks.hidden') }}" class="btn">🗂 Hidden Tasks</a>
+    <a href="{{ url_for('tasks.add') }}" class="btn btn-primary">+ Add Task</a>
+  </div>
 </div>
 
 <!-- Filter bar -->
@@ -137,6 +142,11 @@
          onclick="return confirm('Delete this task?')">
         🗑 Delete
       </a>
+      <a href="{{ url_for('tasks.toggle_hide', task_id=task.id) }}"
+        class="btn btn-outline"
+        style="font-size:13px;padding:7px 10px">
+        {% if task.is_deleted %}📂 Unhide{% else %}📁 Hide{% endif %}
+</a>
     </div>
 
   </div>

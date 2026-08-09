@@ -111,7 +111,7 @@ def complete(task_id):
     return redirect(url_for('tasks.index'))
 
 
-# ── Delete task ─────────────────────────────────────────────
+# # ── Delete task ─────────────────────────────────────────────
 @tasks.route('/delete/<int:task_id>')
 @login_required
 def delete(task_id):
@@ -121,6 +121,29 @@ def delete(task_id):
     flash('Task deleted.', 'info')
     return redirect(url_for('tasks.index'))
 
+
+# hide feature for now
+@tasks.route('/toggle_hide/<int:task_id>')
+@login_required
+def toggle_hide(task_id):
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first_or_404()
+    task.is_deleted = not task.is_deleted
+    db.session.commit()
+
+    # Redirect back to wherever the user came from
+    if task.is_deleted:
+        return redirect(url_for('tasks.index'))       # just hid it → back to main list
+    else:
+        return redirect(url_for('tasks.hidden'))       # just unhid it → back to hidden list
+
+@tasks.route('/hidden')
+@login_required
+def hidden():
+    hidden_tasks = Task.query.filter_by(
+        user_id=current_user.id, is_deleted=True
+    ).order_by(Task.created_at.desc()).all()
+
+    return render_template('tasks/hidden.html', tasks=hidden_tasks)
 
 # ── Add category ────────────────────────────────────────────
 @tasks.route('/category/add', methods=['POST'])
