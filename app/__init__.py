@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from dotenv import load_dotenv
 from .models import db, User, migrate
+
 import os
 
 load_dotenv()
@@ -28,11 +29,13 @@ def create_app():
     from .auth.routes      import auth
     from .tasks.routes     import tasks
     from .dashboard.routes import dashboard
+    from app.api_auth import api_auth
 
     app.register_blueprint(auth,      url_prefix='/auth')
     app.register_blueprint(tasks,     url_prefix='/tasks')
     app.register_blueprint(dashboard)
-
+    app.register_blueprint(api_auth)
+  
 
     # 404 error handler
     @app.errorhandler(404)
