@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Hidden Tasks{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h2>Hidden Tasks</h2>
+  <a href="{{ url_for('tasks.index') }}" class="btn">← Back to Tasks</a>
+</div>
+
+<p style="font-size:13px;color:#888;margin-bottom:10px">
+  {{ tasks|length }} hidden task{{ 's' if tasks|length != 1 }}
+</p>
+
+{% if tasks %}
+  {% for task in tasks %}
+  <div class="task-card">
+    <div class="task-top">
+      <div class="task-title">{{ task.title }}</div>
+    </div>
+
+    <div class="task-meta">
+      <span class="badge badge-{{ task.priority }}">{{ task.priority }} priority</span>
+      {% if task.category %}
+      <span class="badge badge-category">{{ task.category.name }}</span>
+      {% endif %}
+    </div>
+
+    <div class="task-actions">
+      <a href="{{ url_for('tasks.toggle_hide', task_id=task.id) }}"
+         class="btn btn-outline"
+         style="font-size:13px;padding:7px 10px">
+        📂 Unhide
+      </a>
+      <a href="{{ url_for('tasks.delete', task_id=task.id) }}"
+         class="btn btn-danger"
+         style="font-size:13px;padding:7px 10px"
+         onclick="return confirm('Permanently delete this task?')">
+        🗑 Delete Permanently
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📂</div>
+    <div class="empty-text">No hidden tasks</div>
+  </div>
+{% endif %}
+
+{% endblock %}

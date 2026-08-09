@@ -9,23 +9,24 @@ dashboard = Blueprint('dashboard', __name__)
 @login_required
 def home():
     # Task counts
-    total    = Task.query.filter_by(user_id=current_user.id).count()
-    done     = Task.query.filter_by(user_id=current_user.id, done=True).count()
-    pending  = Task.query.filter_by(user_id=current_user.id, done=False).count()
+    total    = Task.query.filter_by(user_id=current_user.id, is_deleted=False).count()
+    done     = Task.query.filter_by(user_id=current_user.id, is_deleted=False, done=True).count()
+    pending  = Task.query.filter_by(user_id=current_user.id, is_deleted=False, done=False).count()
 
     # Overdue — pending tasks where due_date has passed
     today    = datetime.utcnow().date()
     overdue  = Task.query.filter(
-        Task.user_id == current_user.id,
-        Task.done    == False,
-        Task.due_date < today
+        Task.user_id    == current_user.id,
+        Task.is_deleted == False,
+        Task.done       == False,
+        Task.due_date   < today
     ).count()
 
     # Progress percentage
     percent  = round((done / total * 100)) if total > 0 else 0
 
     # Recent 5 tasks
-    recent   = Task.query.filter_by(user_id=current_user.id)\
+    recent   = Task.query.filter_by(user_id=current_user.id, is_deleted=False)\
                          .order_by(Task.created_at.desc()).limit(5).all()
 
     # Categories with task counts
