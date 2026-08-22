@@ -6,8 +6,10 @@ from datetime import datetime
 dashboard = Blueprint('dashboard', __name__)
 
 @dashboard.route('/')
-@login_required
 def home():
+    if not current_user.is_authenticated:
+        return render_template('welcome.html')
+
     # Task counts
     total    = Task.query.filter_by(user_id=current_user.id, is_deleted=False).count()
     done     = Task.query.filter_by(user_id=current_user.id, is_deleted=False, done=True).count()
