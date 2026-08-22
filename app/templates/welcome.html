@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager — Get things done</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; overflow-x: hidden; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+</style>
+<style>
+  /* Scoped to this page only — doesn't touch your app's existing styles */
+  .lp-wrap {
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(245,166,35,0.08), transparent),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(124,156,191,0.06), transparent),
+      #17181C;
+    color: #C8C9CE;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    font-feature-settings: "kern" 1;
+  }
+
+  .lp-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 26px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .lp-logo {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 17px;
+    color: #F2F1ED;
+    letter-spacing: -0.01em;
+  }
+
+  .lp-logo span { color: #F5A623; }
+
+  .lp-nav-links { display: flex; gap: 10px; align-items: center; }
+
+  .lp-btn {
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.18s ease;
+  }
+
+  .lp-btn-ghost {
+    color: #9799A1;
+    border: 1px solid transparent;
+  }
+
+  .lp-btn-ghost:hover {
+    color: #F2F1ED;
+  }
+
+  .lp-btn-solid {
+    background: #F5A623;
+    color: #17181C;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 0 0 1px rgba(245,166,35,0.3);
+  }
+
+  .lp-btn-solid:hover {
+    background: #FFB53D;
+    transform: translateY(-1px);
+  }
+
+  .lp-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 72px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 96px 48px 110px;
+  }
+
+  .lp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    color: #F5A623;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    padding: 5px 12px 5px 10px;
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.18);
+    border-radius: 20px;
+  }
+
+  .lp-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #F5A623;
+  }
+
+  .lp-headline {
+    font-family: 'Courier New', monospace;
+    font-size: 54px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #F5F4F0;
+    letter-spacing: -0.025em;
+    margin-bottom: 26px;
+  }
+
+  .lp-headline .lp-strike {
+    text-decoration: line-through;
+    text-decoration-color: rgba(245,166,35,0.55);
+    text-decoration-thickness: 3px;
+    color: #6B6D76;
+  }
+
+  .lp-sub {
+    font-size: 17px;
+    line-height: 1.65;
+    color: #8B8D96;
+    max-width: 440px;
+    margin-bottom: 40px;
+  }
+
+  .lp-cta-row { display: flex; gap: 12px; }
+
+  .lp-cta-primary {
+    padding: 14px 28px;
+    background: #F5A623;
+    color: #17181C;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 0 0 1px rgba(245,166,35,0.35), 0 8px 24px -8px rgba(245,166,35,0.4);
+    transition: all 0.18s ease;
+  }
+
+  .lp-cta-primary:hover {
+    background: #FFB53D;
+    transform: translateY(-1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 0 0 1px rgba(245,166,35,0.35), 0 12px 28px -8px rgba(245,166,35,0.5);
+  }
+
+  .lp-cta-secondary {
+    padding: 14px 28px;
+    color: #C8C9CE;
+    border: 1px solid #2E2F37;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.18s ease;
+  }
+
+  .lp-cta-secondary:hover {
+    border-color: #45474F;
+    color: #F2F1ED;
+  }
+
+  /* Signature element: the self-checking checklist */
+  .lp-checklist {
+    background: linear-gradient(180deg, #212228, #1D1E23);
+    border: 1px solid #2C2D34;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+
+  .lp-checklist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6B6D76;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .lp-checklist-dots { display: flex; gap: 6px; }
+  .lp-checklist-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #33343B;
+  }
+
+  .lp-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 15px;
+    border-radius: 11px;
+    margin-bottom: 8px;
+    background: #26272E;
+    border: 1px solid rgba(255,255,255,0.02);
+    opacity: 0;
+    animation: lp-fade-in 0.5s ease forwards;
+  }
+
+  .lp-item:nth-child(2) { animation-delay: 0.7s; }
+  .lp-item:nth-child(3) { animation-delay: 1.4s; }
+  .lp-item:nth-child(4) { animation-delay: 2.1s; }
+  .lp-item:nth-child(5) { animation-delay: 2.8s; }
+
+  @keyframes lp-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lp-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid #45474F;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lp-item.lp-done .lp-check {
+    background: #F5A623;
+    border-color: #F5A623;
+    animation: lp-check-pop 0.4s ease forwards;
+    animation-delay: inherit;
+  }
+
+  .lp-item:nth-child(1).lp-done .lp-check { animation-delay: 0.3s; }
+  .lp-item:nth-child(2).lp-done .lp-check { animation-delay: 1.0s; }
+  .lp-item:nth-child(3).lp-done .lp-check { animation-delay: 1.7s; }
+
+  @keyframes lp-check-pop {
+    0% { transform: scale(0.6); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .lp-item-text {
+    font-size: 14px;
+    color: #C8C9CE;
+  }
+
+  .lp-item.lp-done .lp-item-text {
+    color: #6B6D76;
+    text-decoration: line-through;
+  }
+
+  .lp-tag {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .lp-tag-high { background: rgba(245,166,35,0.15); color: #F5A623; }
+  .lp-tag-med { background: rgba(124,156,191,0.15); color: #7C9CBF; }
+
+  .lp-features {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #24252B;
+    border: 1px solid #24252B;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .lp-feature {
+    padding: 32px 30px;
+    background: #1B1C21;
+    transition: background 0.2s ease;
+  }
+
+  .lp-feature:hover { background: #1E1F25; }
+
+  .lp-feature-num {
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    color: #F5A623;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .lp-feature h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #F2F1ED;
+    margin-bottom: 9px;
+    letter-spacing: -0.01em;
+  }
+
+  .lp-feature p {
+    font-size: 14px;
+    color: #8B8D96;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 860px) {
+    .lp-hero { grid-template-columns: 1fr; padding: 56px 24px 64px; gap: 48px; }
+    .lp-headline { font-size: 38px; }
+    .lp-features { grid-template-columns: 1fr; padding: 0 24px 64px; }
+    .lp-nav { padding: 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lp-wrap">
+  <nav class="lp-nav">
+    <div class="lp-logo">task<span>manager</span></div>
+    <div class="lp-nav-links">
+      <a href="{{ url_for('auth.login') }}" class="lp-btn lp-btn-ghost">Log in</a>
+      <a href="{{ url_for('auth.register') }}" class="lp-btn lp-btn-solid">Sign up</a>
+    </div>
+  </nav>
+
+  <section class="lp-hero">
+    <div>
+      <div class="lp-eyebrow">For people who write everything down anyway</div>
+      <h1 class="lp-headline">
+        Your to-do list,<br>
+        <span class="lp-strike">forgotten</span> finished.
+      </h1>
+      <p class="lp-sub">
+        Track tasks, set priorities, hit deadlines. No noise, no
+        clutter — just what you need to do, and whether you did it.
+      </p>
+      <div class="lp-cta-row">
+        <a href="{{ url_for('auth.register') }}" class="lp-cta-primary">Get started free</a>
+        <a href="{{ url_for('auth.login') }}" class="lp-cta-secondary">I have an account</a>
+      </div>
+    </div>
+
+    <div class="lp-checklist">
+      <div class="lp-checklist-header">
+        <span>Today</span>
+        <div class="lp-checklist-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="lp-item lp-done">
+        <div class="lp-check"></div>
+        <div class="lp-item-text">Reply to client email</div>
+      </div>
+      <div class="lp-item lp-done">
+        <div class="lp-check"></div>
+        <div class="lp-item-text">Push migration to prod</div>
+        <div class="lp-tag lp-tag-high">High</div>
+      </div>
+      <div class="lp-item lp-done">
+        <div class="lp-check"></div>
+        <div class="lp-item-text">Review pull request</div>
+      </div>
+      <div class="lp-item">
+        <div class="lp-check"></div>
+        <div class="lp-item-text">Write weekly report</div>
+        <div class="lp-tag lp-tag-med">Medium</div>
+      </div>
+      <div class="lp-item">
+        <div class="lp-check"></div>
+        <div class="lp-item-text">Plan next sprint</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-features">
+    <div class="lp-feature">
+      <div class="lp-feature-num">Organize</div>
+      <h3>Categories & priorities</h3>
+      <p>Group tasks the way you actually think about them, and flag what needs attention first.</p>
+    </div>
+    <div class="lp-feature">
+      <div class="lp-feature-num">Track</div>
+      <h3>Due dates, no surprises</h3>
+      <p>See what's overdue at a glance — before it becomes a problem, not after.</p>
+    </div>
+    <div class="lp-feature">
+      <div class="lp-feature-num">Reflect</div>
+      <h3>A dashboard that means something</h3>
+      <p>Real stats on what you've finished, not just a wall of unchecked boxes.</p>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

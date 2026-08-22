@@ -33,6 +33,10 @@ def create_app():
     app.register_blueprint(tasks,     url_prefix='/tasks')
     app.register_blueprint(dashboard)
 
+    @app.route('/welcome')
+    def welcome():
+        return render_template('welcome.html')
+
 
     # 404 error handler
     @app.errorhandler(404)
